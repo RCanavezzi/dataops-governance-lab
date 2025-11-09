@@ -10,7 +10,9 @@ USER root
 RUN pip install --no-cache-dir \
     pandas \
     matplotlib \
-    findspark # O findspark não é estritamente necessário na imagem jupyter/pyspark, mas é bom ter
+    findspark \
+    great-expectations==0.18.8 \
+    sqlalchemy==1.4.46
 # Ajustado para Iceberg
 RUN apt-get update
 RUN apt-get install openjdk-8-jdk-headless -qq > /dev/null
@@ -37,8 +39,15 @@ RUN useradd -ms /bin/bash -g 100 -u 1001 tavares && \
     chown -R tavares:users /home/tavares && \
     chown -R tavares:users /opt/warehouse
 
+# Copia o script de inicialização
+COPY init-great-expectations.py /home/tavares/
+RUN chown tavares:users /home/tavares/init-great-expectations.py
+
 # Retorna para o usuário 'tavares' e define o diretório de trabalho
 USER tavares
 WORKDIR /home/tavares/work
+
+# Executa o script de inicialização
+RUN python /home/tavares/init-great-expectations.py
 
 # Porta 8888 (Jupyter Notebook) já é exposta pela imagem base.

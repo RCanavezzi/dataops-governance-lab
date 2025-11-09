@@ -259,14 +259,19 @@ java -version
 export JAVA_HOME=$(readlink -f /usr/bin/java | sed "s:bin/java::")
 ```
 
-### Problema: Great Expectations não instala
+### Problema: Great Expectations não funciona
 ```bash
-# Use versão específica
-pip install great-expectations==0.18.8
+# 1. Reconstrua a imagem Docker com Great Expectations
+docker-compose down
+docker-compose build --no-cache
+docker-compose up -d
 
-# Ou instale dependências separadamente
-pip install sqlalchemy==1.4.46
-pip install great-expectations
+# 2. Ou instale manualmente no container
+docker exec -it pyspark_aula_container pip install great-expectations==0.18.8 sqlalchemy==1.4.46
+
+# 3. Verifique a instalação no notebook
+import great_expectations as gx
+print(gx.__version__)
 ```
 
 ### Problema: Jupyter não acessa
@@ -309,6 +314,15 @@ Laboratório completo com Great Expectations para:
 - Gerar relatórios profissionais
 
 **Ideal para**: Aprendizado prático de DataOps e Great Expectations.
+
+### 🧪 **test_great_expectations.ipynb** - Teste do Ambiente
+Notebook de diagnóstico para:
+- Verificar instalação do Great Expectations
+- Testar Data Context
+- Validar configuração do ambiente
+- Executar testes básicos
+
+**Ideal para**: Diagnóstico de problemas e verificação do ambiente.
 
 ## 📊 Datasets do Desafio
 
